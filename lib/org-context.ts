@@ -1,6 +1,10 @@
+"use server"
+
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { Organization, Role } from "@/db/generated/prisma/client"
+import { hasAccess } from "@/lib/rbac"
 
 /**
  * Organization Context Utilities
@@ -16,7 +20,7 @@ import { auth } from "@/lib/auth"
  * Returns null if no org is selected
  */
 export async function getCurrentOrgId(): Promise<string | null> {
-  const orgId = cookies().get("orgId")?.value
+  const orgId = (await cookies()).get("orgId")?.value
   return orgId || null
 }
 
@@ -88,7 +92,7 @@ export async function verifyOrgAccess(orgId: string, userId: string): Promise<bo
  * Get all organizations the user belongs to
  * Used in onboarding and org switcher
  */
-export async function getUserOrganizations(userId: string) {
+export async function getUserOrganizations(userId: string): Promise<Organization[]> {
   const memberships = await prisma.member.findMany({
     where: { userId },
     include: {
@@ -112,15 +116,16 @@ export async function getUserOrganizations(userId: string) {
  * Sets the orgId cookie
  */
 export async function switchOrganization(orgId: string, userId: string) {
+  console.log("Switching to organization:", orgId, userId)
   // Verify user has access to this org
-  const hasAccess = await verifyOrgAccess(orgId, userId)
+  const hasOrgAccess = await verifyOrgAccess(orgId, userId)
   
-  if (!hasAccess) {
+  if (!hasOrgAccess) {
     throw new Error("User does not have access to this organization")
   }
 
   // Set cookie
-  cookies().set("orgId", orgId, {
+  (await cookies()).set("orgId", orgId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -128,4 +133,122 @@ export async function switchOrganization(orgId: string, userId: string) {
   })
 
   return { success: true }
+}
+
+/**
+ * RBAC Enhanced Helpers
+ * These combine org context + role checking for server actions
+ */
+
+/**
+ * Get organization context with full member data and role
+ * Use this in server actions that need to check permissions
+ * 
+ * @returns Object with session, orgId, member (with role), and organization
+ * @throws Error if user is not authenticated or not a member
+ * 
+ * @example
+ * export async function createProject(name: string) {
+ *   const { orgId, member } = await getOrgContext()
+ *   
+ *   if (!hasAccess(member.role, ["OWNER", "ADMIN"])) {
+ *     throw new Error("Insufficient permissions")
+ *   }
+ *   
+ *   return await prisma.project.create({
+ *     data: { name, organizationId: orgId }
+ *   })
+ * }
+ */
+export async function getOrgContext() {
+  const session = await auth()
+  const orgId = (await cookies()).get("orgId")?.value
+  
+  if (!session?.user?.id || !orgId) {
+    throw new Error("Unauthorized: No session or organization selected")
+  }
+  
+  // Get user's membership with organization data
+  const member = await prisma.member.findUnique({
+    where: {
+      userId_organizationId: {
+        userId: session.user.id,
+        organizationId: orgId,
+      },
+    },
+    include: { 
+      organization: true,
+      user: true,
+    },
+  })
+
+  if (!member) {
+    throw new Error("User is not a member of this organization")
+  }
+  
+  return { 
+    session, 
+    orgId, 
+    member, 
+    organization: member.organization,
+    role: member.role,
+    userId: session.user.id,
+  }
+}
+
+/**
+ * Require specific role(s) to proceed
+ * Throws error if user doesn't have required permissions
+ * 
+ * @param allowedRoles - Array of roles that are allowed to proceed
+ * @returns Organization context if user has access
+ * @throws Error if user doesn't have required role
+ * 
+ * @example
+ * export async function deleteProject(projectId: string) {
+ *   // Only OWNER and ADMIN can delete projects
+ *   const { orgId } = await requireRole(["OWNER", "ADMIN"])
+ *   
+ *   return await prisma.project.delete({
+ *     where: { id: projectId, organizationId: orgId }
+ *   })
+ * }
+ */
+export async function requireRole(allowedRoles: Role[]) {
+  const context = await getOrgContext()
+  
+  if (!hasAccess(context.role, allowedRoles)) {
+    throw new Error(
+      `Insufficient permissions. Required: ${allowedRoles.join(" or ")}. Current: ${context.role}`
+    )
+  }
+  
+  return context
+}
+
+/**
+ * Lightweight auth check - just verify user is authenticated with an org
+ * Use this when you don't need role checking, just tenant scoping
+ * 
+ * @returns Object with userId and orgId
+ * @throws Error if not authenticated
+ * 
+ * @example
+ * export async function getProjects() {
+ *   const { orgId } = await requireAuth()
+ *   
+ *   return await prisma.project.findMany({
+ *     where: { organizationId: orgId }
+ *   })
+ * }
+ */
+export async function requireAuth() {
+  const session = await auth()
+  const orgId = (await cookies()).get("orgId")?.value
+
+  if (!session?.user?.id || !orgId) {
+    throw new Error("Unauthorized")
+  }
+
+  return { userId: session.user.id, orgId }
 }
