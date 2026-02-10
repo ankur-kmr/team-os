@@ -114,7 +114,7 @@ export const taskSchema = z.object({
     .max(2000, "Description must be less than 2000 characters")
     .optional(),
   status: z.enum(["TODO", "IN_PROGRESS", "DONE"]),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM").optional(),
   assignedToId: z.string().optional(),
 });
 

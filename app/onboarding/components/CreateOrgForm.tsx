@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input"
 import { createOrganizationSchema, type CreateOrganizationInput } from "@/lib/validations"
 import { createOrganization } from "@/lib/actions"
 import { slugify } from "@/lib/utils"
-import LogoutButton from "./LogoutButton"
 
 interface CreateOrgFormProps {
   userId: string
@@ -135,13 +134,6 @@ export default function CreateOrgForm({ userId }: CreateOrgFormProps) {
           </Button>
         </form>
       </Form>
-
-      <div className="border-t pt-4">
-        <p className="text-center text-sm text-muted-foreground mb-2">
-          Not ready to create an organization?
-        </p>
-        <LogoutButton />
-      </div>
     </div>
   )
 }

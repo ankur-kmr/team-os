@@ -4,7 +4,7 @@ interface AuditLogPayload {
   organizationId: string;
   actorId?: string;
   action: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | number | boolean | null>;
 }
 
 /**
@@ -43,7 +43,7 @@ export async function logAudit({
 /**
  * Create a human-readable description of an audit action
  */
-export function getActionDescription(action: string, metadata?: Record<string, any>): string {
+export function getActionDescription(action: string, metadata?: Record<string, string | number | boolean | null>): string {
   const descriptions: Record<string, string> = {
     organization_created: "Created organization",
     organization_updated: "Updated organization settings",
@@ -95,7 +95,7 @@ export async function getActivityFeed(
   return logs.map((log) => ({
     id: log.id,
     action: log.action,
-    description: getActionDescription(log.action, log.metadata),
+    description: getActionDescription(log.action, log.metadata as Record<string, string | number | boolean | null>),
     actor: log.actor?.name || log.actor?.email || "System",
     timestamp: log.createdAt,
     metadata: log.metadata,
