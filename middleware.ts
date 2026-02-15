@@ -38,6 +38,12 @@ export async function middleware(request: NextRequest) {
   }
 
   console.log("🔐 Session:", session)
+
+  // Skip auth routes
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next()
+  }
+  
   // Protected routes require authentication
   if (!session?.user) {
     // await(() => new Promise(resolve => setTimeout(resolve, 5000)))
@@ -72,6 +78,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }

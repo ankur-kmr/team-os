@@ -5,6 +5,7 @@ import { getDashboardContext } from "@/lib/get-dashboard-context";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PlusIcon } from "lucide-react";
+import InviteMemberDialog from "../../members/components/InviteMemberDialog";
 
 export default async function ProjectPage({ params }: { params: Promise<{ projectId: string }> }) {
     const { projectId } = await params;
@@ -62,6 +63,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
                 <ButtonLink outline={true} href={`/dashboard/projects/${projectId}/tasks/new`}>
                     <PlusIcon className="size-4" /> New Task
                 </ButtonLink>
+                <InviteMemberDialog />
             </div>
         </div>
     );

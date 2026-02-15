@@ -59,6 +59,7 @@ export const ModelName = {
   Project: 'Project',
   Task: 'Task',
   Comment: 'Comment',
+  Invitation: 'Invitation',
   Subscription: 'Subscription',
   UsageRecord: 'UsageRecord',
   WebhookEvent: 'WebhookEvent',
@@ -176,6 +177,21 @@ export const CommentScalarFieldEnum = {
 } as const
 
 export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const InvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  organizationId: 'organizationId',
+  role: 'role',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  invitedById: 'invitedById',
+  acceptedAt: 'acceptedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {

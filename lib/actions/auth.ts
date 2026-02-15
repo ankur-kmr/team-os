@@ -1,5 +1,6 @@
 "use server"
 
+import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { hash } from "bcryptjs"
 import { registerSchema, type RegisterInput } from "@/lib/validations"
@@ -56,10 +57,19 @@ export async function registerUser(input: RegisterInput) {
 }
 
 /**
- * Sign out the current user
- * Clears session and redirects to login
+ * Clear org context cookie (call before signOut so next user doesn't get old org).
+ */
+export async function clearOrgCookie() {
+  const c = await cookies()
+  c.delete("orgId")
+}
+
+/**
+ * Sign out the current user (server).
+ * Prefer using signOut() from "next-auth/react" in client components
+ * so redirect and cookie clearing work reliably.
  */
 export async function logoutUser() {
-  await signOut()
-  return { success: true }
+  await signOut({ redirectTo: "/login" })
+  await clearOrgCookie()
 }

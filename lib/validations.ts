@@ -21,7 +21,7 @@ export const nameSchema = z
   .string()
   .min(2, "Name must be at least 2 characters")
   .max(50, "Name must be less than 50 characters")
-  .optional();
+  // .optional();
 
 export const orgNameSchema = z
   .string()
@@ -158,6 +158,15 @@ export const commentSchema = z.object({
     .max(1000, "Comment must be less than 1000 characters"),
 });
 
+/**
+ * Accept invite schema
+ * Used in: app/accept-invite/page.tsx
+ */
+export const acceptInviteSchema = z.object({
+  password: passwordSchema,
+  name: nameSchema,
+});
+
 // ==================== TYPE EXPORTS ====================
 
 // Export inferred TypeScript types for use throughout the app
@@ -171,3 +180,4 @@ export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
 export type ChangeMemberRoleInput = z.infer<typeof changeMemberRoleSchema>;
 export type CommentInput = z.infer<typeof commentSchema>;
+export type AcceptInviteInput = z.infer<typeof acceptInviteSchema>;

@@ -28,6 +28,7 @@ model User {
   tasksAssigned Task[]     @relation("TaskAssignee")
   tasksCreated  Task[]     @relation("TaskCreator")
   comments      Comment[]  @relation("UserComments")
+  invitations   Invitation[]
 }
 
 model Session {
@@ -67,6 +68,7 @@ model Organization {
   subscription Subscription?
   auditLogs    AuditLog[]
   featureFlags FeatureFlag[]
+  invitations  Invitation[]
 }
 
 /**
@@ -168,6 +170,36 @@ model Comment {
   @@index([organizationId])
   @@index([authorId])
 }
+
+/**
+ * =========================
+ * INVITE TOKENS (ORG INVITES)
+ * =========================
+ */
+
+model Invitation {
+  id             String   @id @default(cuid())
+  email          String
+  organizationId String
+  role           Role
+
+  // security
+  tokenHash      String   @unique
+  expiresAt      DateTime
+
+  // audit / product
+  invitedById    String
+  acceptedAt     DateTime?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedBy    User         @relation(fields: [invitedById], references: [id])
+
+  @@unique([email, organizationId])
+  @@index([organizationId])
+  @@index([email])
+}
+
 
 /**
  * =========================

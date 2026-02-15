@@ -58,6 +58,11 @@ export type Task = Prisma.TaskModel
  */
 export type Comment = Prisma.CommentModel
 /**
+ * Model Invitation
+ * 
+ */
+export type Invitation = Prisma.InvitationModel
+/**
  * Model Subscription
  * 
  */

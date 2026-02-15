@@ -12,7 +12,7 @@ export { registerUser, logoutUser } from "./auth"
 export { createOrganization, updateOrganization } from "./organizations"
 
 // Members
-export { inviteMember, changeMemberRole, removeMember } from "./members"
+export { inviteMember, changeMemberRole, removeMember, acceptInvite } from "./members"
 
 // Projects
 export { createProject } from "./projects"
