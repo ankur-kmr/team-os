@@ -11,6 +11,8 @@ import { generateInviteToken } from "../invite"
 import { sendInviteEmail } from "../email"
 import { cookies } from "next/headers"
 import { auth } from "@/lib/auth"
+import { UsageLimitError } from "../errors"
+import { requireUsageLimit } from "../usage"
 
 /**
  * Member Management Actions
@@ -31,11 +33,16 @@ export async function getMembers(orgId: string) {
  */
 
 export async function inviteMember(email: string, role: Role) {
-  const session = await auth()
-  if (!session?.user?.id) throw new Error("Unauthorized")
-
   const orgId = (await cookies()).get("orgId")?.value
   if (!orgId) throw new Error("No organization")
+
+  const { allowed, current, limit, plan } = await requireUsageLimit(orgId, "members");
+  if (!allowed) {
+    throw new UsageLimitError("members", current, limit, plan)
+  }
+
+  const session = await auth()
+  if (!session?.user?.id) throw new Error("Unauthorized")
 
   const actor = await prisma.member.findUnique({
     where: {

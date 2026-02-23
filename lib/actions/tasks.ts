@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma"
 import { logAudit } from "@/lib/audit"
 import { Priority, TaskStatus } from "@/db/generated/prisma/client"
+import { requireUsageLimit } from "../usage"
+import { UsageLimitError } from "../errors"
 
 /**
  * Task Management Actions
@@ -22,6 +24,11 @@ export async function createTask(
   assignedToId?: string
 ) {
   try {
+    const { allowed, current, limit, plan } = await requireUsageLimit(orgId, "tasks");
+    if (!allowed) {
+      throw new UsageLimitError("tasks", current, limit, plan)
+    }
+    
     // Verify user is member
     const member = await prisma.member.findFirst({
       where: { userId, organizationId: orgId },

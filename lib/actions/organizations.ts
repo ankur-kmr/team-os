@@ -58,7 +58,18 @@ export async function createOrganization(
         },
       },
       include: { members: true },
-    }) as Organization & { members: Member[] }
+    }) as Organization & { members: Member[] };
+    
+    // Create free subscription
+    await prisma.subscription.create({
+      data: {
+        organizationId: org.id,
+        plan: "FREE",
+        status: "active",
+        stripeCustomerId: "",
+        stripeSubscriptionId: "",
+      },
+    });
 
     // Set as active organization
     (await cookies()).set("orgId", org.id, {

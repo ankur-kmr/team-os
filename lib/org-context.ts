@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { Organization, Role } from "@/db/generated/prisma/client"
 import { hasAccess } from "@/lib/rbac"
+import { PlanType } from "./plans"
 
 /**
  * Organization Context Utilities
@@ -251,4 +252,20 @@ export async function requireAuth() {
   }
 
   return { userId: session.user.id, orgId }
+}
+
+/**
+ * Get organization's current plan
+ * Returns FREE if no subscription exists
+ */
+export async function getOrgPlan(orgId: string): Promise<PlanType> {
+  const subscription = await prisma.subscription.findUnique({
+    where: { organizationId: orgId },
+  });
+
+  if (!subscription || subscription.status !== "active") {
+    return "FREE";
+  }
+
+  return (subscription.plan as PlanType) || "FREE";
 }

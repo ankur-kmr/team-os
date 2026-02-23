@@ -12,6 +12,7 @@ import { Task, User } from "@/db/generated/prisma/client";
 import { createTask, updateTaskStatus } from "@/lib/actions/tasks";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { UsageLimitError } from "@/lib/errors";
 
 export default function TaskForm({ task, projectId, users, orgId, userId }: { task?: Task, projectId: string, users: User[], orgId: string, userId: string }) {
     const isEditing = !!task;
@@ -32,18 +33,26 @@ export default function TaskForm({ task, projectId, users, orgId, userId }: { ta
     async function onSubmit(data: TaskInput) {
         console.log(data);
         if (isEditing) {
-            const result = await updateTaskStatus(orgId, userId, task?.id || "", data.status);
-            if (result?.error) {
-                toast.error(result.error);
-                return;
-            }
-            if (result?.success) {
-                toast.success("Task updated successfully");
-                setTimeout(() => {
-                    router.push(`/dashboard/projects/${projectId}/tasks`);
-                }, 500);
+            try {
+                const result = await updateTaskStatus(orgId, userId, task?.id || "", data.status);
+                if (result?.error) {
+                    toast.error(result.error);
+                    return;
+                }
+                if (result?.success) {
+                    toast.success("Task updated successfully");
+                    setTimeout(() => {
+                        router.push(`/dashboard/projects/${projectId}/tasks`);
+                    }, 500);
+                }
+            } catch (error) {
+                if (error instanceof UsageLimitError) {
+                    toast.error(error.message);
+                    return;
+                }
             }
         } else {
+            try {
             const result = await createTask(orgId, userId, projectId || "", data.title, data.description, data.priority, data.assignedToId);
             if (result?.error) {
                 toast.error(result.error);
@@ -53,7 +62,13 @@ export default function TaskForm({ task, projectId, users, orgId, userId }: { ta
                 toast.success("Task created successfully");
                 setTimeout(() => {
                     router.push(`/dashboard/projects/${projectId}/tasks`);
-                }, 500);
+                    }, 500);
+                }
+            } catch (error) {
+                if (error instanceof UsageLimitError) {
+                    toast.error(error.message);
+                    return;
+                }
             }
         }
     }

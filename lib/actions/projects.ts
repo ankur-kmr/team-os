@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma"
 import { logAudit } from "@/lib/audit"
+import { UsageLimitError } from "../errors"
+import { requireUsageLimit } from "../usage"
 
 /**
  * Project Management Actions
@@ -55,6 +57,11 @@ export async function createProject(
  */
 export async function updateProject(orgId: string, userId: string, projectId: string, name: string, description?: string) {
   try {
+    const { allowed, current, limit, plan } = await requireUsageLimit(orgId, "projects");
+    if (!allowed) {
+      throw new UsageLimitError("projects", current, limit, plan)
+    }
+    
     // Verify user is member
     const member = await prisma.member.findFirst({
       where: { userId, organizationId: orgId },
