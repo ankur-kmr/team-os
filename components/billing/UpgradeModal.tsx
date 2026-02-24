@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { PLANS } from "@/lib/plans"
+import { Link } from "lucide-react"
 
 interface UpgradeModalProps {
   open: boolean
@@ -39,11 +40,13 @@ export function UpgradeModal({
             <ul className="list-disc list-inside space-y-1 mt-2">
               <li>{nextPlanLimits.taskLimit === Infinity ? "∞" : nextPlanLimits.taskLimit} tasks</li>
               <li>{nextPlanLimits.projectLimit === Infinity ? "∞" : nextPlanLimits.projectLimit} projects</li>
-              <li>{nextPlanLimits.inviteLimit === Infinity ? "∞" : nextPlanLimits.inviteLimit} team members</li>
+              <li>{nextPlanLimits.memberLimit === Infinity ? "∞" : nextPlanLimits.memberLimit} team members</li>
             </ul>
           </div>
-          <Button onClick={() => window.location.href = "/dashboard/billing"}>
-            Upgrade Now
+          <Button asChild>
+            <Link href="/dashboard/settings/billing/upgrade">
+              Upgrade Now
+            </Link>
           </Button>
         </div>
       </DialogContent>

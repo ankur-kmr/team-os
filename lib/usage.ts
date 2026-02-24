@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { PLANS, PlanType } from "@/lib/plans"
+import { PLANS, Plan } from "@/lib/plans"
 import { getOrgPlan } from "@/lib/org-context"
 import { UsageLimitError } from "./errors"
 
@@ -28,7 +28,7 @@ export async function getOrgUsage(orgId: string) {
 export async function checkUsageLimit(
   orgId: string,
   resource: "tasks" | "projects" | "members"
-): Promise<{ allowed: boolean; current: number; limit: number; plan: PlanType }> {
+): Promise<{ allowed: boolean; current: number; limit: number; plan: Plan }> {
   const plan = await getOrgPlan(orgId)
   const limits = PLANS[plan]
   const usage = await getOrgUsage(orgId)
@@ -47,7 +47,7 @@ export async function checkUsageLimit(
       break
     case "members":
       current = usage.members // Current members count
-      limit = limits.inviteLimit
+      limit = limits.memberLimit
       break
   }
 

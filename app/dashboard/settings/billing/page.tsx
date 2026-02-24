@@ -2,9 +2,9 @@ import { getCurrentOrgId } from "@/lib/org-context"
 import { getOrgUsage } from "@/lib/usage"
 import { getOrgPlan } from "@/lib/org-context"
 import { UsageBar } from "@/components/usage/UsageBar"
-import { PLANS } from "@/lib/plans"
+import { type Plan, PLANS } from "@/lib/plans"
 import { redirect } from "next/navigation"
-import { ButtonLink } from "@/components/ui/button-link"
+import { PlanCard } from "@/components/billing/PlanCard"
 
 export default async function BillingPage() {
   const orgId = await getCurrentOrgId()
@@ -12,42 +12,61 @@ export default async function BillingPage() {
     redirect("/onboarding")
   }
   
-  const plan = await getOrgPlan(orgId)
+  const currentPlan = await getOrgPlan(orgId)
   const usage = await getOrgUsage(orgId)
-  const limits = PLANS[plan]
+  const limits = PLANS[currentPlan]
 
   return (
-    <div className="space-y-6">
-      <h1>Billing & Usage</h1>
-      
+    <div className="space-y-10">
       <div>
-        <h2>Current Plan: {plan}</h2>
+        <h1 className="text-2xl font-bold">Billing & Usage</h1>
+        <p className="text-muted-foreground">
+          Manage your subscription and view usage limits.
+        </p>
       </div>
 
+      {/* Current Usage */}
       <div className="space-y-4">
+        <h2 className="text-lg font-semibold">
+          Current Plan: {currentPlan}
+        </h2>
+
         <UsageBar
           current={usage.tasks}
           limit={limits.taskLimit}
           label="Tasks"
-          plan={plan}
+          plan={currentPlan}
         />
         <UsageBar
           current={usage.projects}
           limit={limits.projectLimit}
           label="Projects"
-          plan={plan}
+          plan={currentPlan}
         />
         <UsageBar
           current={usage.members}
-          limit={limits.inviteLimit}
+          limit={limits.memberLimit}
           label="Team Members"
-          plan={plan}
+          plan={currentPlan}
         />
       </div>
 
-      {plan !== "ENTERPRISE" && (
-        <ButtonLink href="/dashboard/settings/billing/upgrade">Upgrade Plan</ButtonLink>
-      )}
+      {/* Plan Comparison */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4">
+          Available Plans
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {(Object.keys(PLANS) as Plan[]).map((plan) => (
+            <PlanCard
+              key={plan}
+              plan={plan}
+              currentPlan={currentPlan}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

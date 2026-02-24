@@ -1,19 +1,30 @@
-export type PlanType = "FREE" | "PRO" | "ENTERPRISE"
+// lib/plans.ts
 
 export const PLANS = {
   FREE: {
-    taskLimit: 20,
+    name: "FREE",
+    priceLabel: "$0",
+    description: "Best for individuals",
+    taskLimit: 10,
     projectLimit: 3,
-    inviteLimit: 5,
+    memberLimit: 5,
   },
   PRO: {
-    taskLimit: 500,
+    name: "PRO",
+    priceLabel: "$29/mo",
+    description: "Best for growing teams",
+    taskLimit: 1000,
     projectLimit: 50,
-    inviteLimit: 100,
+    memberLimit: 20,
   },
   ENTERPRISE: {
+    name: "ENTERPRISE",
+    priceLabel: "Custom",
+    description: "Unlimited usage",
     taskLimit: Infinity,
     projectLimit: Infinity,
-    inviteLimit: Infinity,
+    memberLimit: Infinity,
   },
 } as const
+
+export type Plan = keyof typeof PLANS

@@ -29,7 +29,7 @@ export type SubscriptionMinAggregateOutputType = {
   organizationId: string | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
-  plan: string | null
+  plan: $Enums.Plan | null
   status: string | null
   createdAt: Date | null
 }
@@ -39,7 +39,7 @@ export type SubscriptionMaxAggregateOutputType = {
   organizationId: string | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
-  plan: string | null
+  plan: $Enums.Plan | null
   status: string | null
   createdAt: Date | null
 }
@@ -162,9 +162,9 @@ export type SubscriptionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type SubscriptionGroupByOutputType = {
   id: string
   organizationId: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId: string | null
+  stripeSubscriptionId: string | null
+  plan: $Enums.Plan
   status: string
   createdAt: Date
   _count: SubscriptionCountAggregateOutputType | null
@@ -193,9 +193,9 @@ export type SubscriptionWhereInput = {
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   id?: Prisma.StringFilter<"Subscription"> | string
   organizationId?: Prisma.StringFilter<"Subscription"> | string
-  stripeCustomerId?: Prisma.StringFilter<"Subscription"> | string
-  stripeSubscriptionId?: Prisma.StringFilter<"Subscription"> | string
-  plan?: Prisma.StringFilter<"Subscription"> | string
+  stripeCustomerId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  stripeSubscriptionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  plan?: Prisma.EnumPlanFilter<"Subscription"> | $Enums.Plan
   status?: Prisma.StringFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
@@ -205,8 +205,8 @@ export type SubscriptionWhereInput = {
 export type SubscriptionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   plan?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -220,9 +220,9 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   OR?: Prisma.SubscriptionWhereInput[]
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
-  stripeCustomerId?: Prisma.StringFilter<"Subscription"> | string
-  stripeSubscriptionId?: Prisma.StringFilter<"Subscription"> | string
-  plan?: Prisma.StringFilter<"Subscription"> | string
+  stripeCustomerId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  stripeSubscriptionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  plan?: Prisma.EnumPlanFilter<"Subscription"> | $Enums.Plan
   status?: Prisma.StringFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
@@ -232,8 +232,8 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
 export type SubscriptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   plan?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -248,18 +248,18 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.SubscriptionScalarWhereWithAggregatesInput | Prisma.SubscriptionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   organizationId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  stripeCustomerId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  stripeSubscriptionId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  plan?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
+  stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
+  stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
+  plan?: Prisma.EnumPlanWithAggregatesFilter<"Subscription"> | $Enums.Plan
   status?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
 }
 
 export type SubscriptionCreateInput = {
   id?: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutSubscriptionInput
@@ -269,9 +269,9 @@ export type SubscriptionCreateInput = {
 export type SubscriptionUncheckedCreateInput = {
   id?: string
   organizationId: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
   usageRecords?: Prisma.UsageRecordUncheckedCreateNestedManyWithoutSubscriptionInput
@@ -279,9 +279,9 @@ export type SubscriptionUncheckedCreateInput = {
 
 export type SubscriptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutSubscriptionNestedInput
@@ -291,9 +291,9 @@ export type SubscriptionUpdateInput = {
 export type SubscriptionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usageRecords?: Prisma.UsageRecordUncheckedUpdateManyWithoutSubscriptionNestedInput
@@ -302,18 +302,18 @@ export type SubscriptionUncheckedUpdateInput = {
 export type SubscriptionCreateManyInput = {
   id?: string
   organizationId: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
 }
 
 export type SubscriptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -321,9 +321,9 @@ export type SubscriptionUpdateManyMutationInput = {
 export type SubscriptionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -400,6 +400,10 @@ export type SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SubscriptionUpdateToOneWithWhereWithoutOrganizationInput, Prisma.SubscriptionUpdateWithoutOrganizationInput>, Prisma.SubscriptionUncheckedUpdateWithoutOrganizationInput>
 }
 
+export type EnumPlanFieldUpdateOperationsInput = {
+  set?: $Enums.Plan
+}
+
 export type SubscriptionCreateNestedOneWithoutUsageRecordsInput = {
   create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutUsageRecordsInput, Prisma.SubscriptionUncheckedCreateWithoutUsageRecordsInput>
   connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutUsageRecordsInput
@@ -416,9 +420,9 @@ export type SubscriptionUpdateOneRequiredWithoutUsageRecordsNestedInput = {
 
 export type SubscriptionCreateWithoutOrganizationInput = {
   id?: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
   usageRecords?: Prisma.UsageRecordCreateNestedManyWithoutSubscriptionInput
@@ -426,9 +430,9 @@ export type SubscriptionCreateWithoutOrganizationInput = {
 
 export type SubscriptionUncheckedCreateWithoutOrganizationInput = {
   id?: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
   usageRecords?: Prisma.UsageRecordUncheckedCreateNestedManyWithoutSubscriptionInput
@@ -452,9 +456,9 @@ export type SubscriptionUpdateToOneWithWhereWithoutOrganizationInput = {
 
 export type SubscriptionUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usageRecords?: Prisma.UsageRecordUpdateManyWithoutSubscriptionNestedInput
@@ -462,9 +466,9 @@ export type SubscriptionUpdateWithoutOrganizationInput = {
 
 export type SubscriptionUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usageRecords?: Prisma.UsageRecordUncheckedUpdateManyWithoutSubscriptionNestedInput
@@ -472,9 +476,9 @@ export type SubscriptionUncheckedUpdateWithoutOrganizationInput = {
 
 export type SubscriptionCreateWithoutUsageRecordsInput = {
   id?: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutSubscriptionInput
@@ -483,9 +487,9 @@ export type SubscriptionCreateWithoutUsageRecordsInput = {
 export type SubscriptionUncheckedCreateWithoutUsageRecordsInput = {
   id?: string
   organizationId: string
-  stripeCustomerId: string
-  stripeSubscriptionId: string
-  plan: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  plan?: $Enums.Plan
   status: string
   createdAt?: Date | string
 }
@@ -508,9 +512,9 @@ export type SubscriptionUpdateToOneWithWhereWithoutUsageRecordsInput = {
 
 export type SubscriptionUpdateWithoutUsageRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutSubscriptionNestedInput
@@ -519,9 +523,9 @@ export type SubscriptionUpdateWithoutUsageRecordsInput = {
 export type SubscriptionUncheckedUpdateWithoutUsageRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -624,9 +628,9 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
-    stripeCustomerId: string
-    stripeSubscriptionId: string
-    plan: string
+    stripeCustomerId: string | null
+    stripeSubscriptionId: string | null
+    plan: $Enums.Plan
     status: string
     createdAt: Date
   }, ExtArgs["result"]["subscription"]>
@@ -1058,7 +1062,7 @@ export interface SubscriptionFieldRefs {
   readonly organizationId: Prisma.FieldRef<"Subscription", 'String'>
   readonly stripeCustomerId: Prisma.FieldRef<"Subscription", 'String'>
   readonly stripeSubscriptionId: Prisma.FieldRef<"Subscription", 'String'>
-  readonly plan: Prisma.FieldRef<"Subscription", 'String'>
+  readonly plan: Prisma.FieldRef<"Subscription", 'Plan'>
   readonly status: Prisma.FieldRef<"Subscription", 'String'>
   readonly createdAt: Prisma.FieldRef<"Subscription", 'DateTime'>
 }

@@ -35,3 +35,12 @@ export const Priority = {
 } as const
 
 export type Priority = (typeof Priority)[keyof typeof Priority]
+
+
+export const Plan = {
+  FREE: 'FREE',
+  PRO: 'PRO',
+  ENTERPRISE: 'ENTERPRISE'
+} as const
+
+export type Plan = (typeof Plan)[keyof typeof Plan]

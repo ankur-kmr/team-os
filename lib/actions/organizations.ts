@@ -66,8 +66,8 @@ export async function createOrganization(
         organizationId: org.id,
         plan: "FREE",
         status: "active",
-        stripeCustomerId: "",
-        stripeSubscriptionId: "",
+        stripeCustomerId: null,
+        stripeSubscriptionId: null,
       },
     });
 
