@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { getCurrentOrgId } from "@/lib/org-context"
 import { getOrgUsage } from "@/lib/usage"
 import { getOrgPlan } from "@/lib/org-context"
@@ -17,7 +19,7 @@ export default async function BillingPage() {
   const limits = PLANS[currentPlan]
 
   return (
-    <div className="space-y-10">
+    <div className="p-6 space-y-10">
       <div>
         <h1 className="text-2xl font-bold">Billing & Usage</h1>
         <p className="text-muted-foreground">

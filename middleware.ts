@@ -20,6 +20,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const { pathname } = request.nextUrl
+  
+  if (pathname.startsWith("/api/stripe")) {
+    return NextResponse.next()
+  }
 
   // Get session
   const session = await auth()

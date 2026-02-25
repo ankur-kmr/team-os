@@ -217,7 +217,7 @@ model Subscription {
   id                   String   @id @default(cuid())
   organizationId       String   @unique
   stripeCustomerId     String?
-  stripeSubscriptionId String?
+  stripeSubscriptionId String?  @unique
   plan                 Plan   @default(FREE)
   status               String
   createdAt            DateTime @default(now())

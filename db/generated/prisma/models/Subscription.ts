@@ -217,17 +217,17 @@ export type SubscriptionOrderByWithRelationInput = {
 export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   organizationId?: string
+  stripeSubscriptionId?: string
   AND?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   OR?: Prisma.SubscriptionWhereInput[]
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   stripeCustomerId?: Prisma.StringNullableFilter<"Subscription"> | string | null
-  stripeSubscriptionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
   plan?: Prisma.EnumPlanFilter<"Subscription"> | $Enums.Plan
   status?: Prisma.StringFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   usageRecords?: Prisma.UsageRecordListRelationFilter
-}, "id" | "organizationId">
+}, "id" | "organizationId" | "stripeSubscriptionId">
 
 export type SubscriptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
